@@ -1,4 +1,5 @@
 import './style.css'
+import { setLocalStorageKey, getLocalStorageKey, addFromLocal } from './local-storage';
 const cityWeather = document.querySelector('#search-city');
 const form = document.querySelector('#form');
 
@@ -7,7 +8,7 @@ const getWeather = (city) => {
     const cloudy = document.querySelector('#cloudy');
     const humid = document.querySelector('#humidity');
     const wind = document.querySelector('#wind');
-    const rain = document.querySelector('#rain');
+    const header = document.querySelector('#header');
 
     const url = `https://open-weather13.p.rapidapi.com/city/${city}`;
     const options = {
@@ -27,12 +28,24 @@ const getWeather = (city) => {
         cloudy.textContent = `cloudy: ${data.clouds.all}`;
         humid.textContent = `humidity: ${data.main.humidity}`;
         wind.textContent = `cloudy: ${data.wind.speed}`;
-        rain.textContent = `cloudy: ${data.rain['1h']}`;
+        header.textContent = `location: ${data.name}`;
+        addWeatherToStorage(data);
     })
-}
+};
 
+const addWeatherToStorage = (value) => {
+    const key = 'weather';
+    setLocalStorageKey(key, value)
+};
+
+const restoreFromLocal = () => {
+    for ( let i = 0, len = localStorage.length; i < len; ++i ) {
+        addFromLocal( localStorage.getItem( localStorage.key( i ) ), form );
+    }
+};
 
 const main = () => {
+    restoreFromLocal()
     form.addEventListener('submit', (e) => {
         e.preventDefault();
         getWeather(cityWeather.value)
